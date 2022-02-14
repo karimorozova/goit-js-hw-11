@@ -22,3 +22,4 @@ const axios = require('axios');
 //   getUser()
 
 fetch('https://pixabay.com/api/?key=25701061-595d2fe4965b481dc05c5d7ff&q=yellow+flowers&image_type=photo').then(res=>res.json())
+console.log('kari');
