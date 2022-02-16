@@ -12,3 +12,7 @@ img {
     width: 100%;
     height: auto;
 }
+
+.load-more {
+    opacity: 0;
+}
