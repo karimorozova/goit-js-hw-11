@@ -1,16 +1,11 @@
-// all modules
-import Notiflix from 'notiflix';
-
-// one by one
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import cardTemplate from './templates/card-template';
 import { ImgApiService } from './ImgApiService';
 
-const imgApi = new ImgApiService();
-console.log(imgApi);
-
+import Notiflix from 'notiflix';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 const axios = require('axios');
 
+const imgApi = new ImgApiService();
 
 
 const refs = {
@@ -31,9 +26,10 @@ function onFormSubmit(e) {
    
     imgApi.searchQuery = searchQuery.value;
     if(imgApi.query === '') {
-        return alert('not ok');
+        Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+        return;
     }
-    refs.loadMoreBtn.style.opacity = 1;
+    refs.loadMoreBtn.style.opacity = 0;
     imgApi.resetPage();
     clearGallery();
     e.currentTarget.reset();
@@ -49,32 +45,29 @@ function clearGallery() {
 }
 function getDataFromServer() {
 
-    if(imgApi.page === 13) {
-        refs.loadMoreBtn.style.opacity = 0;
-      }
+    // if(imgApi.page === 13) {
+    //     Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.")
+    //   }
 
-    imgApi.getImgs().then(imgs => {
-        imgs.map(renderGallery);
-      
+    imgApi.getImgs().then(({totalHits, hits}) => {
+    //    const totalPages = totalHits /40;
+    //    if(page > totalPages) {
+    //     Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
+    //     refs.loadMoreBtn.style.opacity = 0;
+    //     console.log(page);
+    //    }
+         if(hits.length === 0) {
+            refs.loadMoreBtn.style.opacity = 0;
+            Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+            return;  
+        }
+        Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+        hits.map(renderGallery);
+        refs.loadMoreBtn.style.opacity = 1;
+    }).catch(() => {
+        Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
+        refs.loadMoreBtn.style.opacity = 0;
+
     })
 }
-
-// function onLoadMoreClick() {
-//     imgApi.incrementPage();
-    
-//     imgApi.getImgs().then(({data}) => {
-//     data.hits.map(renderGallery);
-//     console.log(data);
-    
-//     })
-   
-// }
-
-// function fetchArticles() {
-//     loadMoreBtn.disable();
-//     newsApiService.fetchArticles().then(articles => {
-//       appendArticlesMarkup(articles);
-//       loadMoreBtn.enable();
-//     });
-//   }
 

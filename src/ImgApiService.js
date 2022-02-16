@@ -13,12 +13,20 @@ export class ImgApiService {
         this.page = 1;
     }
 
-    getImgs() {
+    async getImgs() {
         const url = `${BASE_URL}/?key=${ACCESS_KEY}&q=${this.query}&image-type=${IMAGE_TYPE}&orientation=${IMG_ORIENTATION}&safesearch=${SAFE_SEARCH}&page=${this.page}&per_page=${per_page}`;
-        return axios.get(url).then(({data}) => {
+        
+        const response = await axios.get(url).then(({data: {totalHits, hits}}) => {
             this.incrementPage();
-           
-        return data.hits})
+        return {totalHits, hits}});
+        // console.log(response);
+
+    
+        // const responseData = await response.then(({data: {totalHits, hits}}) => {
+        //     this.incrementPage();
+        // return {totalHits, hits}})
+
+        return response;
         }
 
     incrementPage() {
@@ -37,15 +45,5 @@ export class ImgApiService {
     }
 }
 
-//   fetchArticles() {
-//     const url = `${BASE_URL}/everything?q=${this.searchQuery}&language=en&pageSize=5&page=${this.page}`;
-
-//     return fetch(url, options)
-//       .then(response => response.json())
-//       .then(({ articles }) => {
-//         this.incrementPage();
-//         return articles;
-//       });
-//   }
 
   
