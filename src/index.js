@@ -50,7 +50,10 @@ function getDataFromServer() {
     //   }
 
     imgApi.getImgs().then(({totalHits, hits}) => {
-    //    const totalPages = totalHits /40;
+       const totalPages = totalHits /40;
+       console.log(totalPages);
+    //    console.log(page> totalPages);
+    console.log(page);
     //    if(page > totalPages) {
     //     Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
     //     refs.loadMoreBtn.style.opacity = 0;
