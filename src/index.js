@@ -19,7 +19,7 @@ refs.loadMoreBtn.addEventListener('click', getDataFromServer)
 
 
 
-function onFormSubmit(e) {
+async function onFormSubmit(e) {
     e.preventDefault();
     
     const { elements: { searchQuery } } = e.currentTarget;
@@ -33,7 +33,8 @@ function onFormSubmit(e) {
     imgApi.resetPage();
     clearGallery();
     e.currentTarget.reset();
-    getDataFromServer();
+    await getDataFromServer();
+    
     
 }
 
@@ -43,17 +44,21 @@ function renderGallery({webformatURL, tags, likes, views, comments, downloads}) 
 function clearGallery() {
     refs.gallery.innerHTML = "";
 }
-function getDataFromServer() {
+async function getDataFromServer() {
 
     // if(imgApi.page === 13) {
     //     Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.")
     //   }
 
-    imgApi.getImgs().then(({totalHits, hits}) => {
-       const totalPages = totalHits /40;
+    try {
+        const {totalHits, hits} = await imgApi.getImgs();
+    // imgApi.getImgs().then(({totalHits, hits}) => {
+       const totalPages = totalHits / imgApi.per_page;
        console.log(totalPages);
+       console.log(imgApi.page);
+       
     //    console.log(page> totalPages);
-    console.log(page);
+    // console.log(page);
     //    if(page > totalPages) {
     //     Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
     //     refs.loadMoreBtn.style.opacity = 0;
@@ -64,13 +69,41 @@ function getDataFromServer() {
             Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
             return;  
         }
-        Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+        if(imgApi.page > totalPages) {
+            Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
+                refs.loadMoreBtn.style.opacity = 0;
+                return;
+           }
+        // Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
         hits.map(renderGallery);
         refs.loadMoreBtn.style.opacity = 1;
-    }).catch(() => {
-        Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
+    } catch (error) {
+        Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
         refs.loadMoreBtn.style.opacity = 0;
+    }
+// const {totalHits, hits} = await imgApi.getImgs();
+//     imgApi.getImgs().then(({totalHits, hits}) => {
+//        const totalPages = totalHits /40;
+//        console.log(totalPages);
+//     //    console.log(page> totalPages);
+//     console.log(page);
+//     //    if(page > totalPages) {
+//     //     Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
+//     //     refs.loadMoreBtn.style.opacity = 0;
+//     //     console.log(page);
+//     //    }
+//          if(hits.length === 0) {
+//             refs.loadMoreBtn.style.opacity = 0;
+//             Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+//             return;  
+//         }
+//         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+//         hits.map(renderGallery);
+//         refs.loadMoreBtn.style.opacity = 1;
+//     }).catch(() => {
+//         Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
+//         refs.loadMoreBtn.style.opacity = 0;
 
-    })
+//     })
 }
 
