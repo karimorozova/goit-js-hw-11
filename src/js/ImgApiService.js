@@ -5,7 +5,7 @@ const ACCESS_KEY = '25701061-595d2fe4965b481dc05c5d7ff';
 const IMAGE_TYPE = 'photo';
 const IMG_ORIENTATION = 'horizontal';
 const SAFE_SEARCH = true;
-// const per_page = 40;
+
 
 export class ImgApiService {
     constructor() {

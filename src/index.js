@@ -1,25 +1,26 @@
 import cardTemplate from './templates/card-template';
-import { ImgApiService } from './ImgApiService';
-
+import { ImgApiService } from './js/ImgApiService';
 import Notiflix from 'notiflix';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-const axios = require('axios');
+
+import { renderGallery } from './js/render-gallery';
+import { clearGallery } from './js/clear-gallery';
+import { smoothScroll } from './js/smooth-scroll';
+import { refs } from './js/refs';
+
+// import SimpleLightbox from 'simplelightbox';
+// import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const imgApi = new ImgApiService();
-
-
-const refs = {
-    formData: document.querySelector('#search-form'),
-    gallery: document.querySelector('.gallery'),
-    loadMoreBtn: document.querySelector('.load-more'),
-};
+// const gallerySimple = new SimpleLightbox('.gallery__item');
+// gallerySimple.on('show.simplelightbox');
 
 refs.formData.addEventListener('submit', onFormSubmit);
-refs.loadMoreBtn.addEventListener('click', getDataFromServer)
-
-
+refs.loadMoreBtn.addEventListener('click', getDataFromServer);
+// refs.gallery.addEventListener('click', onGalleryClick)
 
 async function onFormSubmit(e) {
+
     e.preventDefault();
     clearGallery();
     const { elements: { searchQuery } } = e.currentTarget;
@@ -30,27 +31,18 @@ async function onFormSubmit(e) {
         Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
         return;
     }
-    refs.loadMoreBtn.style.opacity = 0;
+
     imgApi.resetPage();
-    
     e.currentTarget.reset();
+    refs.loadMoreBtn.style.opacity = 0;
     await getDataFromServer();
     
-    
-}
-
-function renderGallery({webformatURL, tags, likes, views, comments, downloads}) {
-    refs.gallery.insertAdjacentHTML('beforeend', cardTemplate({webformatURL, tags, likes, views, comments, downloads}));
-}
-function clearGallery() {
-    refs.gallery.innerHTML = "";
 }
 async function getDataFromServer() {
 
     try {
         const {totalHits, hits} = await imgApi.getImgs();
        
-
        const totalPages = totalHits / imgApi.per_page;
        
          if(hits.length === 0) {
@@ -60,15 +52,16 @@ async function getDataFromServer() {
         if(imgApi.page === 2) {
             Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`); 
         }
-
-        hits.map(renderGallery);
-        refs.loadMoreBtn.style.opacity = 1;
         if(imgApi.page > totalPages + 1) {
            
             Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
                 refs.loadMoreBtn.style.opacity = 0;
                 return;
            }
+
+        refs.loadMoreBtn.style.opacity = 1;
+        hits.map(renderGallery);
+        smoothScroll();
     } catch (error) {
         clearGallery();
         Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
@@ -77,4 +70,6 @@ async function getDataFromServer() {
 
 }
 
-
+// function onGalleryClick(e) {
+// e.preventDefault();
+// }

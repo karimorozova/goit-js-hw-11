@@ -13,18 +13,18 @@ img {
     height: 100px; */
 }
 
-.load-more {
-    
-    opacity: 0;
-    display: block;
-    margin-right: auto;
+.container {
+    width: 1360px;
+    padding-left: 15px;
+    padding-right: 15px;
     margin-left: auto;
+    margin-right: auto;
 }
 .gallery {
     display: flex;
     flex-wrap: wrap;
     flex-basis: calc(100% - 50px) / 5;
-    justify-content: center;
+    /* justify-content: center; */
     margin: -10px;
     margin-bottom: 30px;
 }
@@ -81,4 +81,12 @@ button {
     font-size: 20px;
     border-radius: 5px;
 
+}
+
+.load-more {
+    
+    opacity: 0;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
 }
