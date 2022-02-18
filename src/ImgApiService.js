@@ -19,31 +19,9 @@ export class ImgApiService {
         
             const response = await axios.get(url);
             this.incrementPage();
+          
             return response.data;
         
-        // const response = await axios.get(url).then(({data: {totalHits, hits}}) => {
-        //     this.incrementPage();
-        // return {totalHits, hits}});
-
-    //     const BASE_URL = 'https://pixabay.com/api';
-    // const API_KEY = '12565678-dacc4bb7fef27484506aaaffc';
-    // const SEARCH_OPTIONS = 'image_type=photo&orientation=horizontal&safesearch=true';
-
-    // try {
-    //   const response = await axios.get(
-    //     `${BASE_URL}/?key=${API_KEY}&q=${this.searchQuery}&${SEARCH_OPTIONS}&page=${this.page}&per_page=40`,
-    //   );
-    //   this.incrementPage();
-    //   return await response.data;
-    // } catch (error) {}
-        // console.log(response);
-
-    
-        // const responseData = await response.then(({data: {totalHits, hits}}) => {
-        //     this.incrementPage();
-        // return {totalHits, hits}})
-
-        return response;
         }
 
     incrementPage() {
