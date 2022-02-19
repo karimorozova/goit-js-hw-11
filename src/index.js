@@ -5,6 +5,8 @@ import { clearGallery } from './js/clear-gallery';
 import { smoothScroll } from './js/smooth-scroll';
 import { refs } from './js/refs';
 
+
+
 import Notiflix from 'notiflix';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
@@ -15,15 +17,13 @@ const imgApi = new ImgApiService();
 refs.formData.addEventListener('submit', onFormSubmit);
 refs.loadMoreBtn.addEventListener('click', getDataFromServer);
 refs.gallery.addEventListener('click', onGalleryClick);
-
-// intersectionObserver();
-
+intersectionObserver();
 
 async function onFormSubmit(e) {
 
     e.preventDefault();
     clearGallery();
-    
+
     const { elements: { searchQuery } } = e.currentTarget;
     imgApi.searchQuery = searchQuery.value;
 
@@ -116,3 +116,4 @@ function intersectionObserver() {
 }
 }
 }
+

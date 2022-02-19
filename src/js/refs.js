@@ -4,3 +4,4 @@ export const refs = {
     loadMoreBtn: document.querySelector('.load-more'),
     scrollEl: document.querySelector('.scroll'),
 };
+
