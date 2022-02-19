@@ -9,13 +9,12 @@ import { clearGallery } from './js/clear-gallery';
 import { smoothScroll } from './js/smooth-scroll';
 import { refs } from './js/refs';
 
+
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const imgApi = new ImgApiService();
-// console.log(document.querySelector('.gallery__item'));
-// const gallerySimple = new SimpleLightbox('.gallery__item');
-// gallerySimple.on('show.simplelightbox');
+
 
 refs.formData.addEventListener('submit', onFormSubmit);
 refs.loadMoreBtn.addEventListener('click', getDataFromServer);
@@ -26,6 +25,7 @@ async function onFormSubmit(e) {
 
     e.preventDefault();
     clearGallery();
+    
     const { elements: { searchQuery } } = e.currentTarget;
    
     imgApi.searchQuery = searchQuery.value;
@@ -37,7 +37,7 @@ async function onFormSubmit(e) {
 
     imgApi.resetPage();
     e.currentTarget.reset();
-    refs.loadMoreBtn.style.opacity = 0;
+    refs.loadMoreBtn.classList.add('is-hidden');
     await getDataFromServer();
     
 }
@@ -47,7 +47,7 @@ async function getDataFromServer() {
         const {totalHits, hits} = await imgApi.getImgs();
        
        const totalPages = totalHits / imgApi.per_page;
-       console.log(imgApi.page);
+    //    console.log(imgApi.page);
        
          if(hits.length === 0) {
             
@@ -56,15 +56,17 @@ async function getDataFromServer() {
         if(imgApi.page === 2) {
             Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`); 
         }
+        hits.map(renderGallery);
         if(imgApi.page > totalPages + 1) {
+            console.log(imgApi.page > totalPages + 1);
            
             Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
-                refs.loadMoreBtn.style.opacity = 0;
+            // refs.loadMoreBtn.classList.add('is-hidden');
                 return;
            }
 
-        refs.loadMoreBtn.style.opacity = 1;
-         hits.map(renderGallery);
+        //    refs.loadMoreBtn.classList.remove('is-hidden');
+        
         
         const gallerySimple = new SimpleLightbox('.gallery-item');
         gallerySimple.on('show.simplelightbox');
@@ -74,11 +76,77 @@ async function getDataFromServer() {
     } catch (error) {
         clearGallery();
         Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
-        refs.loadMoreBtn.style.opacity = 0;
+        // refs.loadMoreBtn.classList.add('is-hidden');
     }
 
 }
 
+intersectionObserver();
+
 function onGalleryClick(e) {
 e.preventDefault();
 }
+
+function intersectionObserver() {
+    const options = {
+        rootMargin: '300px',
+    }
+    const observer = new IntersectionObserver(onEntry, options);
+observer.observe(refs.scrollEl);
+
+ function onEntry(entries) {
+    entries.forEach(fetchEntriesForScroll);
+}
+
+async function fetchEntriesForScroll(value) {
+if(value.isIntersecting && imgApi.query !== "") {
+    console.log('kolp');
+  const {hits, totalHits} =  await imgApi.getImgs();
+  const totalPages = totalHits / imgApi.per_page;
+    hits.map(renderGallery);
+  
+    
+}
+
+}
+}
+
+// function intersectionObserver() {
+//     const options = {
+//         rootMargin: '300px',
+//     }
+//     const observer = new IntersectionObserver(onEntry, options);
+// observer.observe(refs.scrollEl);
+
+//  function onEntry(entries) {
+//     entries.forEach(fetchEntriesForScroll);
+// }
+
+// async function fetchEntriesForScroll(value) {
+// if(value.isIntersecting&& imgApi.query !== "") {
+//     console.log('kolp');
+//   const {hits} =  await imgApi.getImgs();
+//     hits.map(renderGallery)
+// }
+// }
+// }
+
+// const options = {
+//     rootMargin: '300px',
+// }
+
+
+// const observer = new IntersectionObserver(onEntry, options);
+// observer.observe(refs.scrollEl);
+
+//  function onEntry(entries) {
+//     entries.forEach(fetchEntriesForScroll);
+// }
+
+// async function fetchEntriesForScroll(value) {
+// if(value.isIntersecting&& imgApi.query !== "") {
+//     console.log('kolp');
+//   const {hits} =  await imgApi.getImgs();
+//     hits.map(renderGallery)
+// }
+// }

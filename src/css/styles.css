@@ -15,8 +15,9 @@ img {
 
 .container {
     width: 1360px;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding: 50px  15px;
+    /* padding-left: 15px;
+    padding-right: 15px; */
     margin-left: auto;
     margin-right: auto;
 }
@@ -26,13 +27,17 @@ img {
     flex-basis: calc(100% - 50px) / 5;
     /* justify-content: center; */
     margin: -10px;
-    margin-bottom: 30px;
+    /* margin-bottom: 30px; */
 }
 
 .photo-card {
     position: relative;
     margin: 10px;
     height: 200px;
+}
+
+.gallery-item {
+    display: block;
 }
 
 .info {
@@ -85,8 +90,14 @@ button {
 
 .load-more {
     
-    opacity: 0;
+    /* opacity: 0; */
     display: block;
     margin-right: auto;
     margin-left: auto;
+}
+
+.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
