@@ -16,7 +16,7 @@ refs.formData.addEventListener('submit', onFormSubmit);
 refs.loadMoreBtn.addEventListener('click', getDataFromServer);
 refs.gallery.addEventListener('click', onGalleryClick);
 
-intersectionObserver();
+// intersectionObserver();
 
 
 async function onFormSubmit(e) {
@@ -38,6 +38,7 @@ async function onFormSubmit(e) {
     refs.loadMoreBtn.classList.add('is-hidden');
     await getDataFromServer();
    
+   
 }
 async function getDataFromServer() {
 
@@ -54,16 +55,14 @@ async function getDataFromServer() {
         if(imgApi.page === 2) {
             Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`); 
         }
-        
         if(imgApi.page > totalPages + 1) {
-            console.log(imgApi.page > totalPages + 1);
-           
+
             Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
-            // refs.loadMoreBtn.classList.add('is-hidden');
+            refs.loadMoreBtn.classList.add('is-hidden');
                 return;
            }
 
-        //    refs.loadMoreBtn.classList.remove('is-hidden');
+           refs.loadMoreBtn.classList.remove('is-hidden');
         
         const gallerySimple = new SimpleLightbox('.gallery-item');
         gallerySimple.on('show.simplelightbox');
@@ -73,7 +72,7 @@ async function getDataFromServer() {
     } catch (error) {
         clearGallery();
         Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
-        // refs.loadMoreBtn.classList.add('is-hidden');
+        refs.loadMoreBtn.classList.add('is-hidden');
     }
 
 }
@@ -95,13 +94,25 @@ function intersectionObserver() {
 
     async function fetchEntriesForScroll(value) {
     if(value.isIntersecting && imgApi.query !== "") {
-    
-    const {hits, totalHits} =  await imgApi.getImgs();
-    const totalPages = totalHits / imgApi.per_page;
-    hits.map(renderGallery);
-    const gallerySimple = new SimpleLightbox('.gallery-item');
+        
+        try {
+            const {hits, totalHits} =  await imgApi.getImgs();
+            const totalPages = totalHits / imgApi.per_page;
+            refs.loadMoreBtn.classList.add('is-hidden');
+
+        hits.map(renderGallery);
+
+          if(imgApi.page > totalPages + 2) {
+           Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
+           }
+
+        const gallerySimple = new SimpleLightbox('.gallery-item');
         gallerySimple.on('show.simplelightbox');
-        gallerySimple.refresh();
+        } catch (error) {
+            clearGallery();
+            Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+        }
+  
 }
 }
 }
